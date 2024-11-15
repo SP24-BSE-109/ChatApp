@@ -61,16 +61,18 @@ public class ClientHandler implements Runnable{
     }
 
     private void broadcastMessage(String message) {
-        for(ClientHandler client : clients) {
+        for (ClientHandler client : clients) {
             try {
-                if(client == this) continue;  // Don't send the message to the sender
-                bufferedWriter.newLine();
+                if (client == this) continue;
+                client.bufferedWriter.write(message);
+                client.bufferedWriter.newLine();
                 client.bufferedWriter.flush();
             } catch (IOException i) {
                 System.out.println("Error broadcasting message: " + i.getMessage());
             }
         }
     }
+
     private void removeClientHandler(){
         closeEverything(socket, bufferedReader, bufferedWriter);
         clients.remove(this);
