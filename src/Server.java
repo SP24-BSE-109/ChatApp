@@ -3,32 +3,47 @@ import java.net.*;
 
 public class Server {
 
-    private ServerSocket socket = null;
-    private DataInputStream in = null;
+    private ServerSocket serverSocket;
 
-    public void CreateServer(int port){
-        try {
-            socket = new ServerSocket(port);
-            System.out.println("Server is listening on port " + port);
-            Socket clientSocket = socket.accept();
-            System.out.println("Client connected: " + clientSocket.getInetAddress().getHostAddress());
-            String line = "";
-            while (!line.equals("Over")) {
-                try {
-                    line = in.readUTF();
-                    System.out.println(line);
-                } catch(IOException i) {
-                    System.out.println(i);
-                }
-            }
-            System.out.println("Closing connection");
-            socket.close();
-            in.close();
-        } catch (IOException e) {
-            System.err.println("Could not listen on port " + port);
-
-        }
-
+    public Server(ServerSocket socket) {
+        this.serverSocket = socket;
     }
 
+    public void startServer() {
+        try {
+            while (!serverSocket.isClosed()) {
+                Socket socket = serverSocket.accept();
+                System.out.println("New client connected");
+                ClientHandler clientHandler = new ClientHandler(socket);
+
+                Thread thread = new Thread(clientHandler);
+                thread.start();
+            }
+        }
+        catch (IOException e){
+
+        }
+    }
+    public void closeServerSocket(){
+        if(serverSocket != null){
+            try {
+                serverSocket.close();
+            } catch (IOException i) {
+                i.printStackTrace();
+            }
+        }
+    }
+
+    public static void main(String[] args) {
+        ServerSocket serverSocket = null;
+        try {
+            serverSocket = new ServerSocket(1234);
+            System.out.println("Server started on port " + serverSocket.getLocalPort());
+            Server server = new Server(serverSocket);
+            server.startServer();
+        } catch (IOException e) {
+            System.err.println("Could not listen on port 1234");
+            System.exit(1);
+        }
+    }
 }
