@@ -13,8 +13,7 @@ public class Message {
 
         message = msg.nextLine();
         message = message + ("[")+dateTime+("]");
-
-
+        return null;
     }
 
 }
