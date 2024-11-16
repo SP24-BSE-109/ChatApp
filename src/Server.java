@@ -3,7 +3,7 @@ import java.net.*;
 
 public class Server {
 
-    private ServerSocket serverSocket;
+    private final ServerSocket serverSocket;
 
     public Server(ServerSocket socket) {
         this.serverSocket = socket;
@@ -21,7 +21,7 @@ public class Server {
             }
         }
         catch (IOException e){
-
+            e.printStackTrace();
         }
     }
     public void closeServerSocket(){

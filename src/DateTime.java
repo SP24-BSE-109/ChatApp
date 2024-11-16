@@ -1,10 +1,11 @@
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+
 public class DateTime {
 
-    private String dateTime;
-
-    public String getDateTime() {
-        LocalDateTime DateTime = LocalDateTime.now();
-        return DateTime.toString();
+    public static String getDateTime() {
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+        LocalDateTime dateTime = LocalDateTime.now();
+        return dateTime.format(formatter);
     }
 }
