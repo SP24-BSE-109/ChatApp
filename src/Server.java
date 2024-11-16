@@ -1,14 +1,26 @@
 import java.io.*;
-import java.net.*;
+import java.net.ServerSocket;
+import java.net.Socket;
 
+/**
+ * Represents the chat server that accepts and handles client connections.
+ */
 public class Server {
 
-    private final ServerSocket _serverSocket;
+    private final ServerSocket _serverSocket; // The server's listening socket
 
+    /**
+     * Initializes the server with a listening socket.
+     *
+     * @param _socket The server socket.
+     */
     public Server(ServerSocket _socket) {
         this._serverSocket = _socket;
     }
 
+    /**
+     * Starts the server and listens for incoming connections.
+     */
     public void StartServer() {
         try {
             while (!_serverSocket.isClosed()) {
@@ -19,13 +31,16 @@ public class Server {
                 Thread thread = new Thread(clientHandler);
                 thread.start();
             }
-        }
-        catch (IOException e){
+        } catch (IOException e) {
             e.printStackTrace();
         }
     }
-    public void CloseServerSocket(){
-        if(_serverSocket != null){
+
+    /**
+     * Closes the server socket.
+     */
+    public void CloseServerSocket() {
+        if (_serverSocket != null) {
             try {
                 _serverSocket.close();
             } catch (IOException i) {
@@ -34,10 +49,12 @@ public class Server {
         }
     }
 
+    /**
+     * Entry point for the chat server.
+     */
     public static void main(String[] args) {
-        ServerSocket _serverSocket = null;
         try {
-            _serverSocket = new ServerSocket(1234);
+            ServerSocket _serverSocket = new ServerSocket(1234);
             System.out.println("Server started on port " + _serverSocket.getLocalPort());
             Server _server = new Server(_serverSocket);
             _server.StartServer();

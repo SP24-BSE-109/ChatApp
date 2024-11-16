@@ -2,21 +2,30 @@ import java.io.*;
 import java.net.Socket;
 import java.util.ArrayList;
 
+/**
+ * Handles individual client connections and manages communication between the client and server.
+ */
 public class ClientHandler implements Runnable {
 
-    public static ArrayList<ClientHandler> _clientsList = new ArrayList<ClientHandler>();
+    // Static list to maintain all connected clients
+    public static ArrayList<ClientHandler> _clientsList = new ArrayList<>();
 
-    private Socket _socket;
-    private BufferedReader _bufferedReader;
-    private BufferedWriter _bufferedWriter;
-    private String _clientName;
+    private Socket _socket;                     // The client's socket
+    private BufferedReader _bufferedReader;     // To read incoming messages from the client
+    private BufferedWriter _bufferedWriter;     // To send messages to the client
+    private String _clientName;                 // Name of the client
 
+    /**
+     * Constructor to initialize the ClientHandler for a connected client.
+     *
+     * @param _socket The client's socket connection.
+     */
     public ClientHandler(Socket _socket) {
         try {
             this._socket = _socket;
             this._bufferedWriter = new BufferedWriter(new OutputStreamWriter(_socket.getOutputStream()));
             this._bufferedReader = new BufferedReader(new InputStreamReader(_socket.getInputStream()));
-            this._clientName = _bufferedReader.readLine();
+            this._clientName = _bufferedReader.readLine(); // Get client's name from the first message
             _clientsList.add(this);
             BroadcastMessage("Server: " + _clientName + " has joined the chat");
         } catch (IOException e) {
@@ -24,6 +33,9 @@ public class ClientHandler implements Runnable {
         }
     }
 
+    /**
+     * Continuously listens for messages from the client and handles them.
+     */
     @Override
     public void run() {
         String _message;
@@ -42,6 +54,11 @@ public class ClientHandler implements Runnable {
         }
     }
 
+    /**
+     * Sends a message to all connected clients except the sender.
+     *
+     * @param message The message to broadcast.
+     */
     private void BroadcastMessage(String message) {
         for (ClientHandler _client : _clientsList) {
             try {
@@ -55,17 +72,33 @@ public class ClientHandler implements Runnable {
         }
     }
 
+    /**
+     * Formats the message with a timestamp.
+     *
+     * @param _message The message to format.
+     * @return Formatted message.
+     */
     private String FormatMessage(String _message) {
         String _timestamp = DateTime.GetDateTime();
-        return "[" + _timestamp + "] " + _message;
+        return "[" + _timestamp + "] " + _clientName + ": " + _message;
     }
 
+    /**
+     * Removes this client from the list of active clients and notifies others.
+     */
     private void RemoveClientHandler() {
         _clientsList.remove(this);
         BroadcastMessage("Server: " + _clientName + " has left the chat");
         CloseEverything(_socket, _bufferedReader, _bufferedWriter);
     }
 
+    /**
+     * Closes all resources associated with this client.
+     *
+     * @param socket The client's socket.
+     * @param bufferedReader The reader to close.
+     * @param bufferedWriter The writer to close.
+     */
     private void CloseEverything(Socket socket, BufferedReader bufferedReader, BufferedWriter bufferedWriter) {
         try {
             if (bufferedReader != null) bufferedReader.close();
