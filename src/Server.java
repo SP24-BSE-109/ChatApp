@@ -3,16 +3,16 @@ import java.net.*;
 
 public class Server {
 
-    private final ServerSocket serverSocket;
+    private final ServerSocket _serverSocket;
 
-    public Server(ServerSocket socket) {
-        this.serverSocket = socket;
+    public Server(ServerSocket _socket) {
+        this._serverSocket = _socket;
     }
 
-    public void startServer() {
+    public void StartServer() {
         try {
-            while (!serverSocket.isClosed()) {
-                Socket socket = serverSocket.accept();
+            while (!_serverSocket.isClosed()) {
+                Socket socket = _serverSocket.accept();
                 System.out.println("New client connected");
                 ClientHandler clientHandler = new ClientHandler(socket);
 
@@ -24,10 +24,10 @@ public class Server {
             e.printStackTrace();
         }
     }
-    public void closeServerSocket(){
-        if(serverSocket != null){
+    public void CloseServerSocket(){
+        if(_serverSocket != null){
             try {
-                serverSocket.close();
+                _serverSocket.close();
             } catch (IOException i) {
                 i.printStackTrace();
             }
@@ -35,12 +35,12 @@ public class Server {
     }
 
     public static void main(String[] args) {
-        ServerSocket serverSocket = null;
+        ServerSocket _serverSocket = null;
         try {
-            serverSocket = new ServerSocket(1234);
-            System.out.println("Server started on port " + serverSocket.getLocalPort());
-            Server server = new Server(serverSocket);
-            server.startServer();
+            _serverSocket = new ServerSocket(1234);
+            System.out.println("Server started on port " + _serverSocket.getLocalPort());
+            Server _server = new Server(_serverSocket);
+            _server.StartServer();
         } catch (IOException e) {
             System.err.println("Could not listen on port 1234");
             System.exit(1);

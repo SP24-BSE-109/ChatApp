@@ -3,9 +3,9 @@ import java.time.format.DateTimeFormatter;
 
 public class DateTime {
 
-    public static String getDateTime() {
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
-        LocalDateTime dateTime = LocalDateTime.now();
-        return dateTime.format(formatter);
+    public static String GetDateTime() {
+        DateTimeFormatter _formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+        LocalDateTime _dateTime = LocalDateTime.now();
+        return _dateTime.format(_formatter);
     }
 }

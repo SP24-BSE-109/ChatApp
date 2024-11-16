@@ -4,69 +4,69 @@ import java.util.ArrayList;
 
 public class ClientHandler implements Runnable {
 
-    public static ArrayList<ClientHandler> clients = new ArrayList<>();
+    public static ArrayList<ClientHandler> _clientsList = new ArrayList<ClientHandler>();
 
-    private Socket socket;
-    private BufferedReader bufferedReader;
-    private BufferedWriter bufferedWriter;
-    private String clientName;
+    private Socket _socket;
+    private BufferedReader _bufferedReader;
+    private BufferedWriter _bufferedWriter;
+    private String _clientName;
 
-    public ClientHandler(Socket socket) {
+    public ClientHandler(Socket _socket) {
         try {
-            this.socket = socket;
-            this.bufferedWriter = new BufferedWriter(new OutputStreamWriter(socket.getOutputStream()));
-            this.bufferedReader = new BufferedReader(new InputStreamReader(socket.getInputStream()));
-            this.clientName = bufferedReader.readLine();
-            clients.add(this);
-            broadcastMessage("Server: " + clientName + " has joined the chat");
+            this._socket = _socket;
+            this._bufferedWriter = new BufferedWriter(new OutputStreamWriter(_socket.getOutputStream()));
+            this._bufferedReader = new BufferedReader(new InputStreamReader(_socket.getInputStream()));
+            this._clientName = _bufferedReader.readLine();
+            _clientsList.add(this);
+            BroadcastMessage("Server: " + _clientName + " has joined the chat");
         } catch (IOException e) {
-            closeEverything(socket, bufferedReader, bufferedWriter);
+            CloseEverything(_socket, _bufferedReader, _bufferedWriter);
         }
     }
 
     @Override
     public void run() {
-        String message;
-        while (socket.isConnected()) {
+        String _message;
+        while (_socket.isConnected()) {
             try {
-                message = bufferedReader.readLine();
-                if (message.equalsIgnoreCase("/quit")) {
-                    removeClientHandler();
+                _message = _bufferedReader.readLine();
+                if (_message.equalsIgnoreCase("/quit")) {
+                    RemoveClientHandler();
                     break;
                 }
-                broadcastMessage(formatMessage(clientName, message));
+                BroadcastMessage(FormatMessage(_message));
             } catch (IOException e) {
-                removeClientHandler();
+                RemoveClientHandler();
                 break;
             }
         }
     }
 
-    private void broadcastMessage(String message) {
-        for (ClientHandler client : clients) {
+    private void BroadcastMessage(String message) {
+        for (ClientHandler _client : _clientsList) {
             try {
-                if (client == this) continue; // Skip the sender
-                client.bufferedWriter.write(message);
-                client.bufferedWriter.newLine();
-                client.bufferedWriter.flush();
+                if (_client == this) continue; // Skip the sender
+                _client._bufferedWriter.write(message);
+                _client._bufferedWriter.newLine();
+                _client._bufferedWriter.flush();
             } catch (IOException e) {
-                closeEverything(socket, bufferedReader, bufferedWriter);
+                CloseEverything(_socket, _bufferedReader, _bufferedWriter);
             }
         }
     }
 
-    private String formatMessage(String name, String message) {
-        String timestamp = DateTime.getDateTime();
-        return "[" + timestamp + "] " + message;
+    private String FormatMessage(String _message) {
+        String _timestamp = DateTime.GetDateTime();
+        return "[" + _timestamp + "] " + _message;
     }
 
-    private void removeClientHandler() {
-        clients.remove(this);
-        broadcastMessage("Server: " + clientName + " has left the chat");
-        closeEverything(socket, bufferedReader, bufferedWriter);
+    private void RemoveClientHandler() {
+        _clientsList.remove(this);
+        BroadcastMessage("Server: " + _clientName + " has left the chat");
+        CloseEverything(_socket, _bufferedReader, _bufferedWriter);
     }
 
-    private void closeEverything(Socket socket, BufferedReader bufferedReader, BufferedWriter bufferedWriter) {
+    private void CloseEverything(Socket socket, BufferedReader bufferedReader, BufferedWriter bufferedWriter) {
         try {
             if (bufferedReader != null) bufferedReader.close();
             if (bufferedWriter != null) bufferedWriter.close();
