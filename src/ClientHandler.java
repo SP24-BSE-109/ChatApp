@@ -20,11 +20,8 @@ public class ClientHandler implements Runnable {
             this._bufferedReader = new BufferedReader(new InputStreamReader(_socket.getInputStream()));
             this._clientName = _bufferedReader.readLine();
             _clientsList.add(this);
-
-            // Send the list of existing clients to the new client
             SendContactsToNewClient();
 
-            // Notify all clients about the new connection
             BroadcastMessage("Server: " + _clientName + " has joined the chat");
         } catch (IOException e) {
             CloseEverything(_socket, _bufferedReader, _bufferedWriter);
@@ -37,10 +34,6 @@ public class ClientHandler implements Runnable {
         while (_socket.isConnected()) {
             try {
                 _message = _bufferedReader.readLine();
-                if (_message.equalsIgnoreCase("/quit")) {
-                    RemoveClientHandler();
-                    break;
-                }
                 BroadcastMessage(FormatMessage(_message));
             } catch (IOException e) {
                 RemoveClientHandler();
@@ -52,12 +45,11 @@ public class ClientHandler implements Runnable {
     private void SendContactsToNewClient() {
         try {
             _bufferedWriter.newLine();
+            _bufferedWriter.write("Users in chat:");
+            _bufferedWriter.newLine();
             for (ClientHandler client : _clientsList) {
                 _bufferedWriter.newLine();
-                _bufferedWriter.write("Users in chat:");
-                _bufferedWriter.newLine();
-                _bufferedWriter.write("----" + client._clientName + "----");
-                _bufferedWriter.newLine();
+                _bufferedWriter.write("----" + client._clientName);
             }
             _bufferedWriter.flush();
         } catch (IOException e) {
@@ -68,7 +60,7 @@ public class ClientHandler implements Runnable {
     private void BroadcastMessage(String message) {
         for (ClientHandler _client : _clientsList) {
             try {
-                if (_client == this) continue; // Skip the sender
+                if (_client == this) continue;
                 _client._bufferedWriter.write(message);
                 _client._bufferedWriter.newLine();
                 _client._bufferedWriter.flush();
@@ -83,7 +75,7 @@ public class ClientHandler implements Runnable {
         return "[" + _timestamp + "] " + _clientName + ": " + _message;
     }
 
-    private void RemoveClientHandler() {
+    public void RemoveClientHandler() {
         _clientsList.remove(this);
         BroadcastMessage("Server: " + _clientName + " has left the chat");
         CloseEverything(_socket, _bufferedReader, _bufferedWriter);

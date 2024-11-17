@@ -6,65 +6,58 @@ import java.util.Scanner;
 public class Main {
 
     public static void main(String[] args) {
-        Scanner scanner = new Scanner(System.in);
+        Scanner _scanner = new Scanner(System.in);
 
         System.out.println("Hi! Welcome to the Chat application.");
         System.out.println("1. Start a server");
         System.out.println("2. Connect to a server as a client");
 
-        int choice;
+        int _choice;
         do {
             System.out.print("Enter your choice (1 or 2): ");
-            choice = scanner.nextInt();
-            scanner.nextLine();
-        } while (choice != 1 && choice != 2);
+            _choice = _scanner.nextInt();
+            _scanner.nextLine();
+        } while (_choice != 1 && _choice != 2);
 
-        if (choice == 1) {
-            startServer(scanner);
+        if (_choice == 1) {
+            StartServer(_scanner);
         }
 
-        startClient(scanner);
+        StartClient(_scanner);
     }
 
-    private static void startServer(Scanner scanner) {
+    private static void StartServer(Scanner _scanner) {
         System.out.print("Enter the port to start the server on: ");
-        int port = scanner.nextInt();
-        scanner.nextLine();
+        int _port = _scanner.nextInt();
+        _scanner.nextLine();
 
         try {
-            ServerSocket serverSocket = new ServerSocket(port);
-            System.out.println("Server started on port " + port);
-            Server server = new Server(serverSocket);
+            ServerSocket _serverSocket = new ServerSocket(_port);
+            System.out.println("Server started on port " + _port);
+            Server _server = new Server(_serverSocket);
 
-            new Thread(server::StartServer).start();
+            new Thread(_server::StartServer).start();
         } catch (IOException e) {
             System.out.println("Error starting server: " + e.getMessage());
             System.exit(1);
         }
     }
 
-    private static void startClient(Scanner scanner) {
+    private static void StartClient(Scanner _scanner) {
         System.out.print("Enter the port to connect to the server: ");
-        int port = scanner.nextInt();
-        scanner.nextLine();
+        int _port = _scanner.nextInt();
+        _scanner.nextLine();
         System.out.print("Enter your name: ");
-        String name = scanner.nextLine();
+        String _name = _scanner.nextLine();
 
         try {
-            Socket socket = new Socket("localhost", port);
-            Client client = new Client(socket, name);
+            Socket _socket = new Socket("localhost", _port);
+            Client _client = new Client(_socket, _name);
 
-            client.ReceiveMessages();
-            client.SendMessage();
+            _client.ReceiveMessages();
+            _client.SendMessage();
         } catch (IOException e) {
             System.out.println("Error connecting to server: " + e.getMessage());
-        }
-    }
-
-    private static void displayContacts() {
-        System.out.println("Contacts list:");
-        for (ClientHandler clientHandler : ClientHandler._clientsList) {
-            System.out.println(" ---- " + clientHandler.GetClientName() + " ----");
         }
     }
 }

@@ -52,15 +52,5 @@ public class Server {
     /**
      * Entry point for the chat server.
      */
-    public static void main(String[] args) {
-        try {
-            ServerSocket _serverSocket = new ServerSocket(1234);
-            System.out.println("Server started on port " + _serverSocket.getLocalPort());
-            Server _server = new Server(_serverSocket);
-            _server.StartServer();
-        } catch (IOException e) {
-            System.err.println("Could not listen on port 1234");
-            System.exit(1);
-        }
-    }
+
 }

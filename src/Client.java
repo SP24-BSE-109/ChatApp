@@ -54,7 +54,7 @@ public class Client {
             Scanner scanner = new Scanner(System.in);
             while (_socket.isConnected()) {
                 String _messageToSend = scanner.nextLine();
-                _bufferedWriter.write(_name + ": " + _messageToSend);
+                _bufferedWriter.write(_messageToSend);
                 _bufferedWriter.newLine();
                 _bufferedWriter.flush();
             }
@@ -85,17 +85,5 @@ public class Client {
     /**
      * Entry point for the chat client.
      */
-    public static void main(String[] args) {
-        Scanner scanner = new Scanner(System.in);
-        System.out.print("Enter your name: ");
-        String _name = scanner.nextLine();
-        try {
-            Socket _socket = new Socket("localhost", 1234);
-            Client client = new Client(_socket, _name);
-            client.ReceiveMessages();
-            client.SendMessage();
-        } catch (IOException e) {
-            System.out.println("Error connecting to server: " + e.getMessage());
-        }
-    }
+
 }
